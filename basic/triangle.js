@@ -101,16 +101,29 @@ function drawTriangle() {
 	var fragmentShader = loadShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
 	//Creating the Program Object and Linking the Shaders
+
+	//create a program object
 	shaderProgram = gl.createProgram();
+
+	//attach the compiled vertex shader to the program
 	gl.attachShader(shaderProgram, vertexShader);
+
+	//attach the compiled fragment shader to the program;
 	gl.attachShader(shaderProgram, fragmentShader);
+
+	//link everything together to a shader program that webgl can use
 	gl.linkProgram(shaderProgram);
 
 	if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
 	    alert("Failed to setup shaders");
 	}
 
+	//if linking succeeds we have a program object and we can call
+	//gl.useProgram() to tell WebGL that this program object should
+	//be used for the rendering
 	gl.useProgram(shaderProgram);
+
+	
 
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
     }
