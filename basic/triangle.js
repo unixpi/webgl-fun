@@ -146,17 +146,48 @@ function drawTriangle() {
 
     function setupBuffers() {
 	//Setting up the buffers
-	
+	//After once has the shaders in place, the next step is to set up the buffers that
+	//will contain the vertex data. In this example, the only buffer we need is the one for
+	//the vertex positions for the triangle.
+
+	//create a WEBGLBuffer object and assign it to the global variable vertexBuffer
 	vertexBuffer = gl.createBuffer();
+
+	//bind the created WEBGLBuffer object to the current array buffer object.
+	//this tells WebGL that from now on, you are working with this buffer object.
+	
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-	var triangleVertices = [
-	    0.0,  0.5,  0.0,
-	        -0.5, -0.5,  0.0,
-	    0.5, -0.5,  0.0
-	];
+
+	//specify the vertices for the triangle
+	//note, the default WebGL coordinate system has its origin with coordinates (0,0,0)
+	//in the middle of the viewport.
+	//All three axes stretch from -1 to 1
+	var triangleVertices = [     0.0,  0.5,  0.0,
+				    -0.5, -0.5,  0.0,
+				     0.5, -0.5,  0.0
+			       ];
+
+	//a Float32Array object is created based on the Javascript array that contains the
+	//vertices: it is used to send in the vertex data to WebGL.
+	//the call to gl.bufferData() writes the vertices data to the currently bound WebGLBuffer
+	//object
+	//this call tells WebGL which data it should place in the buffer object that was created
+	//with gl.createBuffer
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
+
+	//the last thing that is done in this function is to add two new properties with info
+	//that will be needed later to the vertexBuffer object
+
+	//the property itemSize defined below specifies how many components exist for each attribute
 	vertexBuffer.itemSize = 3;
+
+	//numberOfItems specifies the number of items or vertices that exist in this buffer
 	vertexBuffer.numberOfItems = 3;
+
+	//the information from the above two properties is needed when the scene is drawn
+	//in this case we have added the info to the vertexBuffer, i.e close to the location
+	//where the vertex data is specified. this will make it easier to remember to update
+	//the two properties when we update the structure of the vertex data
     }
 
     function draw() {
