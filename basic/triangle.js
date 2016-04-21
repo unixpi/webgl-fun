@@ -123,12 +123,30 @@ function drawTriangle() {
 	//be used for the rendering
 	gl.useProgram(shaderProgram);
 
-	
+	//After the linking, the WebGL implementation has bound the attributes used in the
+	//vertex shader to a generic attribute index. The WebGL implementation has a fixed number of
+	//'slots' for attributes and the generic attribute index identifies one of these 'slots'.
+	//You need to know the generic attribute index for each attribute in the vertex shader,
+	//since during the draw process the index is used to connect the buffer that contains the
+	//vertex data with the correct attribute in the vertex shader. There are two strategies that
+	//one can use to know the index:
+	//(1) use the method gl.bindAttribLocation() to specify which index which index to bind your
+	//attributes to before linking
+	//(2) let WebGL decide which index it should use for a specific attribute, and when the
+	//linking is done, use the method gl.getAttribLocation() to ask which generic attribute
+	//index has been used for a certain attribute (as we have done below))
 
-	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+	//create a new property of the object shaderProgram called vertexPositionAttribute
+	//and use it to store the generic attribute index
+	//we will later use the index saved in this property to connect the buffer containing
+	//the vertex data to the attribute aVertexPosition in the vertex shader.
+	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram,
+								     "aVertexPosition");
     }
 
     function setupBuffers() {
+	//Setting up the buffers
+	
 	vertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	var triangleVertices = [
