@@ -85,7 +85,7 @@ function drawTriangle() {
 	    //has when the fragment shader is finished with it
 	    "precision mediump float;                    \n"+
 	    "void main() {                               \n"+
-	    "  gl_FragColor = vec4(1.0, 1.0, .0, 1.0);  \n"+
+	    "  gl_FragColor = vec4(0.8, 0.5, 0.0, 1.0);  \n"+
 	    "}                                           \n";
 
 	//Compiling Shaders
@@ -191,9 +191,48 @@ function drawTriangle() {
     }
 
     function draw() {
+	//the viewport defines where the rendering results will end up
+	//in the drawing buffer. When a WebGL context is created, the
+	//viewport is initialized to a rectangle with its origin at
+	//(0,0) and a width and height equal to the canvas width and
+	//height. This means that the call to gl.viewPort() does not
+	//actually modify anything in this example (included for completeness)
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+
+	//the method gl.clear() with the argument gl.COLOR_BUFFER_BIT tells
+	//WebGL to clear the color buffer to the color that was previously
+	//specified with gl.ClearColor() ( see startup() )
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
+	//In the function setupBuffers(), a WebGLBuffer object was already
+	//created and bound to the gl.ARRAY_BUFFER target with the method
+	//gl.bindBuffer(). The vertex data was sent to this bound buffer with
+	//the method gl.bufferData().
+	//But what has not been done yet is to tell
+	//WebGL which attribute in the vertex shader shoudl take its input from
+	//the bound buffer object.
+	//In this example there is only one buffer object and one attribute in
+	//the vertex shader, but normally there would be several buffers and
+	//attributes, and these have to be connected somehow
+	
+	//the WebGL method gl.vertexAttribPointer() assigns the WebGLBuffer object
+	//currently bound to the gl.ARRAY_BUFFER target to a vertex attribute passed
+	//in as index in the first argument.
+	//the second argument of this method is the size or the number of components
+	//per attribute. The number of components per attribute is 3 here since there
+	//is an x,y, and z coordinate for each vertex position and we storeed this value
+	//in the method setupBuffers() as a property named itemSize of the vertexBuffer object.
+	//the third argument specifies that the values in the vertex buffer object should be
+	//interpreted as floats. If you send in data that does not consist of floats, the data
+	//needs to be converted to floats before it is used in the vertex shader.
+	//the fourth argument is called the normalized flag, and it decides how non-floating
+	//point data should be converted to floats. In this example, the values in the buffer
+	//are floats, so the argument will not be used anyway.
+	//the fifth argument is called stride, and specifying zero means that the data is
+	//stored sequentially in memory.
+	//The sixth and last argument is the offset into the buffer, and since the data starts
+	//at the start of the buffer, this argument is set to zero as well.
+	
 	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
 			       vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -207,6 +246,7 @@ function drawTriangle() {
 	gl = createGLContext(canvas);
 	setupShaders();
 	setupBuffers();
+	//this example uses gl.clearColor() to specify black as the clear color
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	draw();
     }
