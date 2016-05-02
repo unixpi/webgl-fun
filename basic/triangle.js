@@ -96,7 +96,8 @@ function drawTriangle() {
 	//fragment shader, depending on which arguments are sent to the function.
 	//the function is called once with the type argument set to gl.VERTEX_SHADER and
 	//once with the type argument set to gl.FRAGMENT_SHADER
-	
+
+	//create a shader object. load the source code into it and compile
 	var vertexShader = loadShader(gl.VERTEX_SHADER, vertexShaderSource);
 	var fragmentShader = loadShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
@@ -130,7 +131,7 @@ function drawTriangle() {
 	//since during the draw process the index is used to connect the buffer that contains the
 	//vertex data with the correct attribute in the vertex shader. There are two strategies that
 	//one can use to know the index:
-	//(1) use the method gl.bindAttribLocation() to specify which index which index to bind your
+	//(1) use the method gl.bindAttribLocation() to specify which index to bind your
 	//attributes to before linking
 	//(2) let WebGL decide which index it should use for a specific attribute, and when the
 	//linking is done, use the method gl.getAttribLocation() to ask which generic attribute
@@ -238,6 +239,24 @@ function drawTriangle() {
 
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+	//the method gl.drawArrays() draws the primitives that you specify
+	//as the first argument to the method, based on the vertex data in
+	//the enabled WebGLBuffer objects that are bound to the gl.ARRAY_BUFFER
+	//target
+	//this means that before one can call gl.drawArrays(), one must first:
+	// Create a WebGLBuffer object with gl.createBuffer()
+	// Bind the WebGLBuffer object to the target gl.ARRAY_BUFFER using gl.bindBuffer()
+	// Load vertex data into the buffer using gl.bufferData()
+	// Enable the generic vertex attribute array using gl.enableVertexAttribArray()
+	// Connect the attribute in the vertex shader with correct data in the WebGLBuffer
+	// object by calling gl.vertexAttribPointer()
+
+	//the first argument to gl.drawArrays specifies the primitive you want to render.
+	//the second argument specifies which index in the array of vertex data should
+	//be used as the first index
+	//the third argument specifies how many vertices should be used
+	//this method is simple and fast if you don't have any shared vertices
+	//if you do have alot of shared vertices, consider using gl.drawElements() instead
 	gl.drawArrays(gl.TRIANGLES, 0, vertexBuffer.numberOfItems);
     }
 
@@ -251,4 +270,4 @@ function drawTriangle() {
 	draw();
     }
     
-}
+3}
