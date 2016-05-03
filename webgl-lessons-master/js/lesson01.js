@@ -1,4 +1,3 @@
-
 var gl;
 function initGL(canvas) {
     try {
@@ -12,7 +11,10 @@ function initGL(canvas) {
     }
 }
 
+//This is another one of those functions that is much simpler than it looks.  All we’re doing here is looking for an element in our HTML page that has an ID that matches a parameter passed in, pulling out its contents, creating either a fragment or a vertex shader based on its type (more about the difference between those in a future lesson) and then passing it off to WebGL to be compiled into a form that can run on the graphics card.  The code then handles any errors, and it’s done! Of course, we could just define shaders as strings within our JavaScript code and not mess around with extracting them from the HTML — but by doing it this way, we make them much easier to read, because they are defined as scripts in the web page, just as if they were JavaScript themselves.
 
+
+//webGLStart called initShaders, which used getShader to load the fragment and the vertex shaders from scripts in the web page, so that they could be compiled and passed over to WebGL and used later when rendering our 3D scene.
 function getShader(gl, id) {
     var shaderScript = document.getElementById(id);
     if (!shaderScript) {
@@ -48,6 +50,8 @@ function getShader(gl, id) {
     return shader;
 }
 
+//Now, what is a shader, you may ask?  Well, at some point in the history of 3D graphics they may well have been what they sound like they might be — bits of code that tell the system how to shade, or colour, parts of a scene before it is drawn.  However, over time they have grown in scope, to the extent that they can now be better defined as bits of code that can do absolutely anything they want to bits of the scene before it’s drawn.  And this is actually pretty useful, because (a) they run on the graphics card, so they do what they do really quickly and (b) the kind of transformations they can do can be really convenient even in simple examples like this.
+//The reason that we’re introducing shaders in what is meant to be a simple WebGL example (they’re at least “intermediate” in OpenGL tutorials) is that we use them to get the WebGL system, hopefully running on the graphics card, to apply our model-view matrix and our projection matrix to our scene without us having to move around every point and every vertex in (relatively) slow JavaScript.   This is incredibly useful, and worth the extra overhead.
 
 var shaderProgram;
 
@@ -66,6 +70,7 @@ function initShaders() {
 
     gl.useProgram(shaderProgram);
 
+    //Once the function has set up the program and attached the shaders, it gets a reference to an “attribute”, which it stores in a new field on the program object called vertexPositionAttribute. Once again we’re taking advantage of JavaScript’s willingness to set any field on any object; program objects don’t have a vertexPositionAttribute field by default, but it’s convenient for us to keep the two values together, so we just make the attribute a new field of the program.
     shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
@@ -73,10 +78,12 @@ function initShaders() {
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 }
 
+//we define a variable called mvMatrix to hold the model-view matrix and one called pMatrix for the projection matrix, and then set them to empty (all-zero) matrices to start off with. It’s worth saying a bit more about the projection matrix here. As you will remember, we applied the glMatrix function mat4.perspective to this variable to set up our perspective, right at the start of drawScene. This was because WebGL does not directly support perspective, just like it doesn’t directly support a model-view matrix.  But just like the process of moving things around and rotating them that is encapsulated in the model-view matrix, the process of making things that are far away look proportionally smaller than things close up is the kind of thing that matrices are really good at representing.  And, as you’ve doubtless guessed by now, the projection matrix is the one that does just that.  The mat4.perspective function, with its aspect ratio and field-of-view, populated the matrix with the values that gave use the kind of perspective we wanted.
 
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
+//using the references to the uniforms that represent our projection matrix and our model-view matrix that we got back in initShaders, we send WebGL the values from our JavaScript-style matrices.
 function setMatrixUniforms() {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
