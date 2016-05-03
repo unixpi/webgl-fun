@@ -70,6 +70,7 @@
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+	//This code to get the attribute locations, which we glossed over to a certain degree in the first lesson, should now be pretty clear: they are how we get a reference to the attributes that we want to pass to the vertex shader for each vertex.
         shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
         gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 
