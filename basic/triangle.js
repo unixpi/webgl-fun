@@ -7,7 +7,7 @@ function drawTriangle() {
     var vertexBuffer;
 
     startup();
-    
+
     function createGLContext(canvas) {
 	var names = ["webgl", "experimental-webgl"];
 	var context = null;
@@ -169,11 +169,16 @@ function drawTriangle() {
 			       ];
 
 	//a Float32Array object is created based on the Javascript array that contains the
-	//vertices: it is used to send in the vertex data to WebGL.
+	//vertices: it is used to send in the vertex data to WebGL. The Float32Array constructor
+	//creates a new ArrayBuffer with enough space to hold the data in the Javascript Array
+	//triangleVertices. It also directly creates a Float32Array view that is bound to the buffer.
+	//The vertices in the triangleVertices are uploaded into the ArrayBuffer
+	
 	//the call to gl.bufferData() writes the vertices data to the currently bound WebGLBuffer
 	//object
 	//this call tells WebGL which data it should place in the buffer object that was created
 	//with gl.createBuffer
+	
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
 
 	//the last thing that is done in this function is to add two new properties with info
@@ -237,12 +242,16 @@ function drawTriangle() {
 	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
 			       vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+
+	//You must enable an attribute before you can use it in a shader
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
 	//the method gl.drawArrays() draws the primitives that you specify
 	//as the first argument to the method, based on the vertex data in
 	//the enabled WebGLBuffer objects that are bound to the gl.ARRAY_BUFFER
 	//target
+	//N.B FROM A PERFORMANCE POINT OF VIEW, YOU TYPICALLY WANT TO DO AS FEW
+	//CALLS TO gl.drawArrays() as possible
 	//this means that before one can call gl.drawArrays(), one must first:
 	// Create a WebGLBuffer object with gl.createBuffer()
 	// Bind the WebGLBuffer object to the target gl.ARRAY_BUFFER using gl.bindBuffer()

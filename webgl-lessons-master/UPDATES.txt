@@ -1,0 +1,59 @@
+Updates?
+--------
+
+Many people find their way to Giles Thomas' "Learning WebGL Lessons" when first trying to get
+experience using that technology. His sixteen lessons were written between October 2009 and
+December 2010, and they rely on glMatrix-0.9.5.min.js. That library is at version 2.2.1 as of this
+writing (6 July 2014). See the well-organized glMatrix website at http://glmatrix.net/
+
+You'll learn a lot by going through "Learning WebGL Lessons".
+
+You might think you'd learn something by updating the lessons to work with the current version
+of glMatrix, but, in all honesty, you won't.
+
+I've done it. I doubt I'm the first.
+
+Here's an outline of the necessary changes.
+
+* the functionality of mat4.set(mvMatrix, copy) has been replaced with mat4.copy(copy, mvMatrix).
+
+* mat4.toInverseMat3(mvMatrix, normalMatrix) and mat3.transpose(normalMatrix) have been combined
+  into a single method in the mat3 class, mat3.normalFromMat4().
+
+* the API of mat4.perspective() has been rearranged so that
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+
+  becomes
+
+    mat4.perspective(pMatrix, 45.0, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+
+* the API for a number of relevant methods now take as arguments the matrix (or vector) to be
+  acted upon and the matrix (or vector) to receive the action. These include mat4.translate(),
+  mat4.rotate(), and mat4.multiply(), and the update is simply to change, for example,
+
+    mat4.translate(mvMatrix, [0.0, 0.0, z]);
+
+  to
+
+    mat4.translate (mvMatrix, mvMatrix, [0.0, 0.0, z]);
+
+* the parameters in the API for vec3.normalize() and vec3.scale() have been reversed, so that
+
+    vec3.normalize(lightingDirection, adjustedLD);
+    vec3.scale(adjustedLD, -1);
+
+  becomes
+
+    vec3.normalize(adjustedLD, lightingDirection);
+    vec3.scale(adjustedLD, adjustedLD, -1);
+
+
+I've also changed the values of z, zoom, or zPos (and, when present, the DOM element, "lightPositionZ")
+to approximate the scene size in the original tutorial, added semicolons when flagged by my IDE, removed
+commas at ends of arrays (this is JavaScript, not Python), and replaced a few occurrences of "= Array()"
+with "= []". I've tried to flag all my changes with "// Update: ...".
+
+Hoping this saves a lot of people a lot of time.
+
+Eric Theise / @erictheise
