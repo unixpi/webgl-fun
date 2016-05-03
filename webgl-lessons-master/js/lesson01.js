@@ -80,6 +80,9 @@ function initShaders() {
 
 //we define a variable called mvMatrix to hold the model-view matrix and one called pMatrix for the projection matrix, and then set them to empty (all-zero) matrices to start off with. It’s worth saying a bit more about the projection matrix here. As you will remember, we applied the glMatrix function mat4.perspective to this variable to set up our perspective, right at the start of drawScene. This was because WebGL does not directly support perspective, just like it doesn’t directly support a model-view matrix.  But just like the process of moving things around and rotating them that is encapsulated in the model-view matrix, the process of making things that are far away look proportionally smaller than things close up is the kind of thing that matrices are really good at representing.  And, as you’ve doubtless guessed by now, the projection matrix is the one that does just that.  The mat4.perspective function, with its aspect ratio and field-of-view, populated the matrix with the values that gave use the kind of perspective we wanted.
 
+
+//Define the model-view matrix mvMatrix and the projection matrix pMatrix, along with the function setMatrixUniforms for pushing them over the JavaScript/WebGL divide so that the shaders can see them.
+
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
