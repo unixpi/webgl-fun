@@ -82,6 +82,7 @@ var mvMatrix = mat4.create();
 var mvMatrixStack = [];
 var pMatrix = mat4.create();
 
+//We have a list to hold our stack of matrices, and define push and pop appropriately.
 function mvPushMatrix() {
     var copy = mat4.create();
     // Update: mat4.set(mvMatrix, copy); mat4.set() was removed from gl-matrix, use mat4.copy().
@@ -220,12 +221,12 @@ function drawScene() {
 
 
 var lastTime = 0;
-
 function animate() {
     var timeNow = new Date().getTime();
     if (lastTime != 0) {
 	var elapsed = timeNow - lastTime;
 
+	//the triangle is rotating by 90 degrees per second, and the square by 75 degrees per second. The nice thing about doing it this way is that everyone sees the same rate of motion in the scene regardless of how fast their machine is;
 	rTri += (90 * elapsed) / 1000.0;
 	rSquare += (75 * elapsed) / 1000.0;
     }
