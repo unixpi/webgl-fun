@@ -143,7 +143,6 @@ function degToRad(degrees) {
 var cubeVertexPositionBuffer;
 var cubeVertexTextureCoordBuffer;
 var cubeVertexIndexBuffer;
-
 function initBuffers() {
     cubeVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
@@ -188,8 +187,11 @@ function initBuffers() {
     cubeVertexPositionBuffer.itemSize = 3;
     cubeVertexPositionBuffer.numItems = 24;
 
+    //nteresting change is the replacement of the cube’s vertex colour buffer with a new one — the texture coordinate buffer 
     cubeVertexTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
+
+    //What these texture coordinates specify is where, in cartesian x, y coordinates, the vertex lies in the texture. For the purposes of these coordinates, we treat the texture as being 1.0 wide by 1.0 high, so (0, 0) is at the bottom left, (1, 1) the top right. The conversion from this to the real resolution of the texture image is handled for us by WebGL.
     var textureCoords = [
       // Front face
       0.0, 0.0,
@@ -250,7 +252,6 @@ function initBuffers() {
 var xRot = 0;
 var yRot = 0;
 var zRot = 0;
-
 function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -277,6 +278,7 @@ function drawScene() {
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
     gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+    //WebGL can deal with up to 32 textures during any given call to functions like gl.drawElements, and they’re numbered from TEXTURE0 to TEXTURE31. What we’re doing is saying in the first two lines that texture zero is the one we loaded earlier, and then in the third line we’re passing the value zero up to a shader uniform (which, like the other uniforms that we use for the matrices, we extract from the shader program in initShaders); this tells the shader that we’re using texture zero
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, neheTexture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
