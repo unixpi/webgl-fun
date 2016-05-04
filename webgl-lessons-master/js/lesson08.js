@@ -1,4 +1,8 @@
 
+//how to get “proper” transparency? Well, the OpenGL FAQ says that you need to use a source factor of SRC_ALPHA and a destination factor of ONE_MINUS_SRC_ALPHA. But we still have the problem that the source and the destination fragments are treated differently, and so there’s a dependency on the order in which stuff is drawn. And this point finally gets us to what I think of as the dirty secret of transparency in Open-/WebGL; again, quoting the OpenGL FAQ:
+
+//When using depth buffering in an application, you need to be careful about the order in which you render primitives. Fully opaque primitives need to be rendered first, followed by partially opaque primitives in back-to-front order. If you don’t render primitives in this order, the primitives, which would otherwise be visible through a partially opaque primitive, might lose the depth test entirely.
+
 var gl;
 
 function initGL(canvas) {
@@ -383,14 +387,40 @@ function drawScene() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, glassTexture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
-
+//Firstly, we check whether the “blending” checkbox is checked
     var blending = document.getElementById("blending").checked;
+    
+    //If it is, we set the function that will be used to combine the two fragments:
     if (blending) {
+
+	//The parameters to this function define how the blending is done. This is fiddly, but not difficult. Firstly, let’s define two terms: the source fragment is the one that we’re drawing right now, and the destination fragment is the one that’s already in the frame buffer. The first parameter to the gl.blendFunc determines the source factor, and the second the destination factor; these factors are numbers used in the blending function. In this case, we’re saying that the source factor is the source fragment’s alpha value, and the destination factor is a constant value of one. There are other possibilities; for example, if you use SRC_COLOR to specify the source colour, you wind up with separate source factors for the red, green, blue and alpha values, each of which is equal to the original RGBA components.
+
+	//Now, let’s imagine that WebGL is trying to work out the colour of a fragment when it has a destination with RGBA values of (Rd, Gd, Bd, Ad) and an incoming source fragment with values (Rs, Gs, Bs, As).
+
+//	    In addition, let’s say that we’ve got RGBA source factors of (Sr, Sg, Sb, Sa) and destination factors of (Dr, Dg, Db, Da)
+
+//	For each colour component WebGL will calculate as follows:
+
+//	Rresult = Rs * Sr + Rd * Dr
+//	Gresult = Gs * Sg + Gd * Dg
+//	Bresult = Bs * Sb + Bd * Db
+//	Aresult = As * Sa + Ad * Da
+//	So, in our case, we’re saying (just giving the calculation for the red component, to keep things simple):
+
+//	Rresult = Rs * As + Rd
+//	Normally this wouldn’t be an ideal way of creating transparency, but it happens to work very nicely in this case when the lighting is switched on. And this point is well worth emphasising; blending is not the same as transparency, it’s just a technique that can be used (among others) to get transparent-style effects.
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+	//like many things in WebGL, blending is disabled by default, so we need to switch it on.
 	gl.enable(gl.BLEND);
+
+	//we have to switch off depth testing. If we don’t do this, then the blending will happen in some cases and not in others. For example, if we draw a face of our cube that happens to be at the back before one at the front, then when the back face is drawn it will be written to the frame buffer, and then the front one will be blended on top of it, which is what we want. However, if we draw the front face first and then the back one, the back one will be discarded by the depth test before we get to the blending function, so it will not contribute to the image. This is not what we want.
 	gl.disable(gl.DEPTH_TEST);
+
+//	Here we’re loading an alpha value from a text field in the page and pushing it up to the shaders. This is because the image we’re using for the texture doesn’t have an alpha channel of its own (it’s just RGB, so has an implicit alpha value of 1 for every pixel) so it’s nice to be able to adjust the alpha to see how it affects the image
 	gl.uniform1f(shaderProgram.alphaUniform, parseFloat(document.getElementById("alpha").value));
     } else {
+	//The remainder of the code in drawScene is just that which is necessary to handle things in the normal fashion when blending is switched off:
 	gl.disable(gl.BLEND);
 	gl.enable(gl.DEPTH_TEST);
     }
