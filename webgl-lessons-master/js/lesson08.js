@@ -463,6 +463,10 @@ function webGLStart() {
     initTexture();
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    //This is an instruction to the WebGL system about what to do when writing a new fragment to the frame buffer, and basically means “pay attention to the depth buffer”. It’s taken in combination with another WebGL setting, the depth function. This actually has a sensible value by default, but if we were we actively set it to its default value, it would look like this:
+
+//    gl.depthFunc(gl.LESS);
+//  This means “if our fragment has a Z value that is less than the one that is currently there, use our new one rather than the old one”. This test on its own, combined with the code to enable it, is enough to give us sensible behaviour; things that are close up obscure things that are further away. (You can also set the depth function to various other values, though I suspect they’re more rarely used.)
     gl.enable(gl.DEPTH_TEST);
 
     document.onkeydown = handleKeyDown;
