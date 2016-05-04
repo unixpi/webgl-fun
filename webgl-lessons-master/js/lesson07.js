@@ -133,6 +133,7 @@ function mvPopMatrix() {
 }
 
 
+//copies the model-view and the projection matrices up to the shader’s uniforms.
 function setMatrixUniforms() {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
@@ -142,6 +143,13 @@ function setMatrixUniforms() {
     //   mat4.toInverseMat3(mvMatrix, normalMatrix);
     //   mat3.transpose(normalMatrix);
     // These two methods have been combined into a single method in the mat3 class, mat3.normalFromMat4().
+
+    //As you’d expect from something called a normal matrix, it’s used to transform the normals :-) We can’t transform them in the same way as we transform the vertex positions, using the regular model-view matrix, because normals would be converted by our translations as well as our rotations — for example, if we ignore rotation and assume we’ve done an mvTranslate of (0, 0, -5), the normal (0, 0, 1) would become (0, 0, -4), which is not only too long but is pointing in precisely the wrong direction. We could work around that; you may have noticed that in the vertex shaders, when we multiply the 3-element vertex positions by the 4×4 model-view matrix, in order to make the two compatible we extend the vertex position to four elements by adding an extra 1 onto the end. This 1 is required not just to pad things out, but also to make the multiplication apply translations as well as rotations and other transformations, and it so happens that by adding on a 0 instead of a 1, we could make the multiplication ignore the translations. This would work perfectly well for us right now, but unfortunately wouldn’t handle cases where our model-view matrix included different transformations, specifically scaling and shearing. For example, if we had a model-view matrix that doubled the size of the objects we were drawing, their normals would wind up double-length as well, even with a trailing zero — which would cause serious problems with the lighting. So, in order not to get into bad habits, we’re doing it properly :-)
+
+    //    The proper way to get the normals pointing in the right direction, is to use the transposed inverse of the top-left 3×3 portion of the model-view matrix.
+
+    //Anyway, once we’ve calculated this matrix and done the appropriate magic, it’s put into the shader uniforms just like the other matrices.
+    
     mat3.normalFromMat4(normalMatrix, mvMatrix);
     gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
 }
@@ -383,8 +391,12 @@ function drawScene() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, crateTexture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+    //The next bit is a little more involved. Firstly, we see if the “lighting” checkbox is checked, and set a uniform for our shaders telling them whether or not it is
     var lighting = document.getElementById("lighting").checked;
     gl.uniform1i(shaderProgram.useLightingUniform, lighting);
+
+    //Next, if lighting is enabled, we read out the red, green and blue values for the ambient lighting as specified in the input fields at the bottom of the page and push them up to the shaders too
     if (lighting) {
 	gl.uniform3f(
 	    shaderProgram.ambientColorUniform,
@@ -393,6 +405,8 @@ function drawScene() {
 	    parseFloat(document.getElementById("ambientB").value)
 	);
 
+	//Next, we want to push up the lighting direction
+	//we adjust the lighting direction vector before passing it to the shader, using the vec3 module — which, like the mat4 we use for our model-view and projection matrices, is part of glMatrix. The first adjustment, vec3.normalize, scales it up or down so that its length is one; you will remember that for the cosine of the angle between two vectors to be equal to the dot product, they both need to be of length one. The normals we defined earlier all had the correct length, but as the lighting direction is entered by the user (and it would be a pain for them to have normalise vectors themselves) then we convert this one. The second adjustment is to multiply the vector by a scalar -1 — that is, to reverse its direction. This is because we’re specifying the lighting direction in terms of where the light is going, while the calculations we discussed earlier were in terms of where the light is coming from. Once we’ve done that, we pass it up to the shaders using gl.uniform3fv, which puts a three-element Float32Array (which is what the vec3 functions are dealing with) into a uniform.
 	var lightingDirection = [
 	    parseFloat(document.getElementById("lightDirectionX").value),
 	    parseFloat(document.getElementById("lightDirectionY").value),
@@ -406,6 +420,7 @@ function drawScene() {
 	vec3.scale(adjustedLD, adjustedLD, -1);
 	gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
 
+	//The next bit of code is simpler; it just copies the directional light’s colour components up to the appropriate shader uniform 
 	gl.uniform3f(
 	    shaderProgram.directionalColorUniform,
 	    parseFloat(document.getElementById("directionalR").value),
