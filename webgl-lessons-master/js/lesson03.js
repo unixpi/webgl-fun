@@ -162,6 +162,8 @@ function initBuffers() {
 
 
 
+//These are used to track the rotation of the triangle and the square respectively. They both start off rotated by zero degrees, and then over time these numbers will increase — you’ll see how later — making them rotate more and more. (A side note — using global variables for things like this in a 3D program that is not a simple demo like this would be really bad practice. I show how to structure things in a more elegant manner in lesson 9.
+
 var rTri = 0;
 var rSquare = 0;
 
@@ -179,7 +181,11 @@ function drawScene() {
     // approximate original scene.
     mat4.translate(mvMatrix, mvMatrix, [-1.5, 0.0, -5.4]);
 
+    //Now, what about the calls to mvPushMatrix and mvPopMatrix? As you would expect from the function names, they’re also related to the model-view matrix. Going back to my example of drawing a robot, let’s say your code at the highest level needs to move to point A, draw the robot, then move to some offset from point A and draw a teapot. The code that draws the robot might make all kinds of changes to the model-view matrix; it might start with a body, then move down for the legs, then up for the head, and finish off with the arms. The problem is that if after this you tried to move to your offset, you’d move not relative to point A but instead relative to whatever you last drew, which would mean that if your robot lifted its arms, the teapot would start levitating. Not a good thing.
+
+//    Obviously what is required is some way of storing the state of the model-view matrix before you start drawing the robot, and restoring it afterwards. This is, of course, what mvPushMatrix and mvPopMatrix do. mvPushMatrix puts the matrix onto a stack, and mvPopMatrix gets rid of the current matrix, takes one from the top of the stack, and restores it. Using a stack means that we can have any number of bits of nested drawing code, each of which manipulates the model-view matrix and then restores it afterwards. So once we’ve finished drawing our rotated triangle, we restore the model-view matrix with mvPopMatrix
     mvPushMatrix();
+
     // Update: mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]); mat4.rotate() API has changed to mat4.rotate(out, a, rad, axis)
     // where out is the receiving matrix and a is the matrix to rotate.
     mat4.rotate(mvMatrix, mvMatrix, degToRad(rTri), [0, 1, 0]);
@@ -228,8 +234,13 @@ function animate() {
 
 
 function tick() {
+    //The first line is where tick arranges to be called again when a repaint is needed next. requestAnimFrame is a function in some Google-provided code that we’re including into this web page with a <script> tag at the top, webgl-utils.js. It gives us a browser-independent way of asking the browser to call us back next time it wants to repaint the WebGL scene — for example, next time the computer’s display is refreshing itself. Right now, functions to do this exist in all WebGL-supporting browsers, but they have different names for it (for example, Firefox has a function called mozRequestAnimationFrame, while Chrome and Safari have webkitRequestAnimationFrame). In the future they are expected to all use just requestAnimationFrame. Until then, we can use the Google WebGL utils to have just one call that works everywhere.
+    //worth noting that you could get a similar effect to using requestAnimFrame by asking JavaScript to call the drawScene function regularly, for example by using the built-in JavaScript setInterval function. A lot of early WebGL code (including earlier versions of these tutorials) did just that, and it worked fine — right up until people had more than one WebGL page open, in different browser tabs. Because functions scheduled with setInterval are called regardless of whether the browser tab they belong to is showing, using it meant that computers were doing all the work of displaying every open WebGL tab all the time, hidden or not. This was obviously a Bad Thing, and was the reason why requestAnimationFrame was introduced; functions scheduled using it are only called when the tab is visible.
     requestAnimFrame(tick);
+
+    //draw this frame
     drawScene();
+    //update our state for the next
     animate();
 }
 
