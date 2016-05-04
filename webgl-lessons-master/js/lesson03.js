@@ -141,10 +141,10 @@ function initBuffers() {
     squareVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     vertices = [
-	 1.0,  1.0,  0.0,
-	-1.0,  1.0,  0.0,
-	 1.0, -1.0,  0.0,
-	-1.0, -1.0,  0.0
+	 1.0,  1.0,  1.0,
+	-1.0,  1.0,  1.0,
+	 1.0, -1.0,  1.0,
+	-1.0, -1.0,  1.0
 	];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     squareVertexPositionBuffer.itemSize = 3;
@@ -185,7 +185,7 @@ function drawScene() {
     //Now, what about the calls to mvPushMatrix and mvPopMatrix? As you would expect from the function names, they’re also related to the model-view matrix. Going back to my example of drawing a robot, let’s say your code at the highest level needs to move to point A, draw the robot, then move to some offset from point A and draw a teapot. The code that draws the robot might make all kinds of changes to the model-view matrix; it might start with a body, then move down for the legs, then up for the head, and finish off with the arms. The problem is that if after this you tried to move to your offset, you’d move not relative to point A but instead relative to whatever you last drew, which would mean that if your robot lifted its arms, the teapot would start levitating. Not a good thing.
 
 //    Obviously what is required is some way of storing the state of the model-view matrix before you start drawing the robot, and restoring it afterwards. This is, of course, what mvPushMatrix and mvPopMatrix do. mvPushMatrix puts the matrix onto a stack, and mvPopMatrix gets rid of the current matrix, takes one from the top of the stack, and restores it. Using a stack means that we can have any number of bits of nested drawing code, each of which manipulates the model-view matrix and then restores it afterwards. So once we’ve finished drawing our rotated triangle, we restore the model-view matrix with mvPopMatrix
-    mvPushMatrix();
+//    mvPushMatrix();
 
     // Update: mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]); mat4.rotate() API has changed to mat4.rotate(out, a, rad, axis)
     // where out is the receiving matrix and a is the matrix to rotate.
@@ -199,7 +199,7 @@ function drawScene() {
 
     setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
-    mvPopMatrix();
+  //  mvPopMatrix();
 
 
     mat4.translate(mvMatrix, mvMatrix, [3.0, 0.0, 0.0]);
