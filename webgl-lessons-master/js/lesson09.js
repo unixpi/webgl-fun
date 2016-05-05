@@ -292,13 +292,13 @@ Star.prototype.randomiseColors = function () {
 };
 
 
-
+//create stars
 var stars = [];
-
 function initWorldObjects() {
-    var numStars = 50;
+    var numStars = 200;
 
     for (var i=0; i < numStars; i++) {
+	// Each star is given a first parameter specifying a starting distance from the centre of the scene and a second specifying a speed to orbit the centre of the scene, both of which come from their position in the list.
 	stars.push(new Star((i / numStars) * 5.0, i / numStars));
     }
 }
@@ -311,14 +311,21 @@ function drawScene() {
     // Update: mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix); mat4.perspective() API has changed.
     mat4.perspective (pMatrix, 45.0, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
+    //we switch on blending. We’re using the same blending as we did in the last lesson; you will remember that this allows objects to “shine through” each other. Usefully, it also means that black parts of an object are drawn as if they were transparent;
+    //What this means is that when we are drawing the stars that make up our scene, the black bits will seem transparent; indeed, the less bright a part of the star is, the more transparent it will seem
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
     gl.enable(gl.BLEND);
 
+  //  here we just move to the centre of the scene, and then zoom in appropriately. We also tilt the scene around the X axis; the zoom and the tilt are still global variables controlled from the keyboard.
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, zoom]);
     mat4.rotate(mvMatrix, mvMatrix, degToRad(tilt), [1.0, 0.0, 0.0]);
 
+    //We’re now pretty much ready to draw the scene, so first we check whether the “twinkle” checkbox is checked:
     var twinkle = document.getElementById("twinkle").checked;
+    
+    //we iterate over the list of stars and tell each one to draw itself,
+    //passing in the current tilt of the scene and the twinkle value. We also tell it what the current “spin” is — this is used to make the stars spin around their centres as they orbit the centre of the scene
     for (var i in stars) {
 	stars[i].draw(tilt, spin, twinkle);
 	spin += 0.1;
