@@ -51,7 +51,6 @@ function getShader(gl, id) {
 
 
 var shaderProgram;
-
 function initShaders() {
     var fragmentShader = getShader(gl, "shader-fs");
     var vertexShader = getShader(gl, "shader-vs");
@@ -92,7 +91,6 @@ function handleLoadedTexture(texture) {
 
 
 var starTexture;
-
 function initTexture() {
     starTexture = gl.createTexture();
     starTexture.image = new Image();
@@ -175,7 +173,6 @@ function handleKeys() {
 
 var starVertexPositionBuffer;
 var starVertexTextureCoordBuffer;
-
 function initBuffers() {
     starVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, starVertexPositionBuffer);
@@ -255,9 +252,9 @@ Star.prototype.draw = function (tilt, spin, twinkle) {
     mat4.translate(mvMatrix, mvMatrix, [this.dist, 0.0, 0.0]);
 
     
-    // Rotate back so that the star is facing the viewer
+    // Rotate back before drawing so that the star is facing the viewer
     //These lines are required so that when we alter the tilt of the scene using the cursor keys, the stars still look right. They are drawn as a 2D texture on a square, which looks right when we're looking at it straight on, but would just look like a line if we tilted the scene so that we were viewing it from the side. For similar reasons, we also need to back out the rotation required to position the star. When you "undo" rotations like this, you need to do so in the reverse of the order you did them in the first place, so first we undo the rotation from our positioning, and then the tilt (which was done in drawScene).
-    mat4.rotate(mvMatrix, mvMatrix, degToRad(-this.angle), [0.0, 1.0, 0.0]);
+   mat4.rotate(mvMatrix, mvMatrix, degToRad(-this.angle), [0.0, 1.0, 0.0]);
     mat4.rotate(mvMatrix, mvMatrix, degToRad(-tilt), [1.0, 0.0, 0.0]);
 
     //The next lines are to draw the star
