@@ -282,6 +282,7 @@ function drawScene() {
     // Update: mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix); mat4.perspective() API has changed.
     mat4.perspective (pMatrix, 45.0, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
+    //setup lighting (same as chapter 7)
     var lighting = document.getElementById("lighting").checked;
     gl.uniform1i(shaderProgram.useLightingUniform, lighting);
     if (lighting) {
@@ -313,6 +314,8 @@ function drawScene() {
 	);
     }
 
+
+    //move to the correct position to draw the moon
     mat4.identity(mvMatrix);
 
     // Update: mat4.translate(mvMatrix, [0, 0, -6]); mat4.translate() API has changed to mat4.translate(out, a, v)
@@ -320,8 +323,10 @@ function drawScene() {
     // approximate original scene.
     mat4.translate(mvMatrix, mvMatrix, [0, 0, -4.7]);
 
+    //we’re storing the current rotational state of the moon in a matrix; this matrix starts off as the identity matrix (ie., we don’t rotate it at all) and then as the user manipulates it with the mouse, it changes to reflect those manipulations. So, before we draw the moon, we need to apply the rotation matrix to the current model-view matrix, which we can do with the mat4.multiply function:
     mat4.multiply(mvMatrix, mvMatrix, moonRotationMatrix);
 
+    //Once that’s done, all that remains is to actually draw the moon. This code is pretty standard — we just set the texture then use the same kind of code as we’ve used many times before to tell WebGL to use some pre-prepared buffers to draw a bunch of triangles
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, moonTexture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
@@ -342,6 +347,7 @@ function drawScene() {
 
 
 function tick() {
+    //schedule the next frame and calls drawScene
     requestAnimFrame(tick);
     drawScene();
 }
@@ -357,7 +363,9 @@ function webGLStart() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
+    //These three new lines allow us to detect mouse events and thus spin the moon when the user drags it around.
     canvas.onmousedown = handleMouseDown;
+    //we want to listen for mouse-up and -move events on the document rather than the canvas; by doing this, we are able to pick up drag events even when the mouse is moved or released outside the 3D canvas, so long as the drag started in the canvas — this stops us from being one of those irritating pages where you press the mouse button inside the scene you want to spin, and then release it outside, only to find that when you move the mouse back over the scene the mouse-up has not taken effect and it still thinks you’re dragging stuff around until you click somewhere.
     document.onmouseup = handleMouseUp;
     document.onmousemove = handleMouseMove;
 
