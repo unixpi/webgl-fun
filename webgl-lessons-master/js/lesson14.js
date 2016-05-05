@@ -164,6 +164,7 @@ var teapotVertexNormalBuffer;
 var teapotVertexTextureCoordBuffer;
 var teapotVertexIndexBuffer;
 function handleLoadedTeapot(teapotData) {
+    //the various lists from the loaded JSON object are put into WebGL arrays, which are then pushed over onto the graphics card in newly-allocated buffers
     teapotVertexNormalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexNormalBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexNormals), gl.STATIC_DRAW);
@@ -188,6 +189,7 @@ function handleLoadedTeapot(teapotData) {
     teapotVertexIndexBuffer.itemSize = 1;
     teapotVertexIndexBuffer.numItems = teapotData.indices.length;
 
+    //Once all of this is done, we clear out a div in the HTML document which was previously telling the user that the model was being loaded
     document.getElementById("loadingtext").textContent = "";
 }
 
