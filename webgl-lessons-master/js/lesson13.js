@@ -91,6 +91,9 @@ var currentProgram;
 var perVertexProgram;
 var perFragmentProgram;
 
+
+//So far, we’ve only used one vertex shader and one fragment shader per WebGL page. This one uses two pairs, one for per-vertex lighting and one for per-fragment lighting. Now, you may remember from lesson 1 that the WebGL program object that we use to pass our shader code up to the graphics card can have only one fragment shader and one vertex shader. What this means is that we need to have two programs, and switch which one we use based on the setting of the “per-fragment” checkbox
+//We then switch in the appropriate program right at the start of the drawScene function
 function initShaders() {
     perVertexProgram = createProgram("per-vertex-lighting-fs", "per-vertex-lighting-vs");
     perFragmentProgram = createProgram("per-fragment-lighting-fs", "per-fragment-lighting-vs");
