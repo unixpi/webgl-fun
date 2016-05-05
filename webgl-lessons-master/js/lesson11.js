@@ -153,6 +153,7 @@ var mouseDown = false;
 var lastMouseX = null;
 var lastMouseY = null;
 
+//We keep a matrix to store the current rotation state of the moon, logically enough called moonRotationMatrix. When the user drags the mouse around, we get a sequence of mouse-move events, and each time we see one we work out how many degrees of rotation around the current X and Y axes as seen by the user that drag amounts to. We then calculate a matrix that represents those two rotations, and pre-multiply the moonRotationMatrix by it
 var moonRotationMatrix = mat4.create();
 mat4.identity(moonRotationMatrix);
 
@@ -166,7 +167,6 @@ function handleMouseDown(event) {
 function handleMouseUp(event) {
     mouseDown = false;
 }
-
 
 function handleMouseMove(event) {
     if (!mouseDown) {
