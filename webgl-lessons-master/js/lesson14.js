@@ -163,7 +163,6 @@ var teapotVertexPositionBuffer;
 var teapotVertexNormalBuffer;
 var teapotVertexTextureCoordBuffer;
 var teapotVertexIndexBuffer;
-
 function handleLoadedTeapot(teapotData) {
     teapotVertexNormalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexNormalBuffer);
@@ -194,6 +193,7 @@ function handleLoadedTeapot(teapotData) {
 
 
 function loadTeapot() {
+    // we create a new XMLHttpRequest and use it to load the file Teapot.json. This will happen asynchronously, so we attach a callback function that will be triggered when the process of loading the file reaches various stages, and in the callback we do some stuff when the load reaches a readyState of 4, which means that it is fully loaded.
     var request = new XMLHttpRequest();
     request.open("GET", "Teapot.json");
     request.onreadystatechange = function () {
