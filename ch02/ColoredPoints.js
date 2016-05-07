@@ -11,7 +11,10 @@ var VSHADER_SOURCE =
 var FSHADER_SOURCE =
   'precision mediump float;\n' +
   'uniform vec4 u_FragColor;\n' +  // uniform変数
-  'void main() {\n' +
+    'void main() {\n' +
+    //the inbuilt WebGL variable gl_FragColor is of type vec4 so
+    //we must define u_FragColor as being of type vec4 here
+    //even though in GLSL ES you can specify any type for a uniform variable
   '  gl_FragColor = u_FragColor;\n' +
   '}\n';
 
@@ -19,41 +22,47 @@ function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
 
-  // Get the rendering context for WebGL
-  var gl = getWebGLContext(canvas);
-  if (!gl) {
-    console.log('Failed to get the rendering context for WebGL');
-    return;
-  }
+    // Get the rendering context for WebGL
+    var gl = getWebGLContext(canvas);
+    if (!gl) {
+      console.log('Failed to get the rendering context for WebGL');
+      return;
+    }
 
-  // Initialize shaders
-  if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
-    console.log('Failed to intialize shaders.');
-    return;
-  }
+    // Initialize shaders
+    if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+      console.log('Failed to intialize shaders.');
+      return;
+    }
 
-  // // Get the storage location of a_Position
-  var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-  if (a_Position < 0) {
-    console.log('Failed to get the storage location of a_Position');
-    return;
-  }
+    // // Get the storage location of a_Position
+    var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    if (a_Position < 0) {
+      console.log('Failed to get the storage location of a_Position');
+      return;
+    }
 
-  // Get the storage location of u_FragColor
-  var u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
-  if (!u_FragColor) {
-    console.log('Failed to get the storage location of u_FragColor');
-    return;
-  }
+    // Get the storage location of u_FragColor
+    var u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+    //note the functionality and parameters of this method are the same
+    //as in gl.getAttribLocation(). However the return value of this method
+    //is null, not -1, if the uniform variable does not exist or its name
+    //starts with a reserved prefix
+    //In JavaScript, null can be treated as false when checking the condition of
+    //an if statement
+    if (!u_FragColor) {
+	console.log('Failed to get the storage location of u_FragColor');
+	return;
+    }
 
-  // Register function (event handler) to be called on a mouse press
-  canvas.onmousedown = function(ev){ click(ev, gl, canvas, a_Position, u_FragColor) };
+    // Register function (event handler) to be called on a mouse press
+    canvas.onmousedown = function(ev){ click(ev, gl, canvas, a_Position, u_FragColor) };
 
-  // Specify the color for clearing <canvas>
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    // Specify the color for clearing <canvas>
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-  // Clear <canvas>
-  gl.clear(gl.COLOR_BUFFER_BIT);
+    // Clear <canvas>
+    gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
 var g_points = [];  // The array for the position of a mouse press
