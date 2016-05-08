@@ -54,6 +54,16 @@ function main() {
     //initVertexBuffers(), we need to specify the number of vertices in the object as the
     //third parameter of gl.drawArrays() so that WebGL knows to draw a shape using all
     //the vertices in the buffer object
+    // The Second and Third paramters of gl.drawArrays()
+    // Specification:
+    // gl.drawArrays(mode,first,count)
+    // execute a vertex shader to draw shapes specified by the 'mode' parameter
+    // 'mode' specifies the type of shape to be drawn
+    // 'first' specifies what number-th vertex is used to draw from
+    // 'count' specifies the number of vertices to be used
+    //  when our program runs the next line, it actually causes the vertex shader to
+    //  be executed 'count' (three) times, sequentially passing the vertex coordinates
+    //  stored in the buffer object via the attribute variable into the shader.
   gl.drawArrays(gl.POINTS, 0, n);
 }
 
@@ -112,9 +122,47 @@ function initVertexBuffers(gl) {
       return -1;
     }
     // Assign the buffer object to a_Position variable
+    // As explained in chapter 2, one can use gl.vertexAttrib[1234]f() to
+    // assign data to an attribute variable. However, these methods can only
+    // be used to assign a single data value to an attribute variable. What
+    // we need here is a way to assign an array of values - the vertices in this case -
+    // to an attribute pointer
+    // gl.vertexAttribPointer() solves this problem and can be used to assign a reference
+    // (or handle) to the buffer object to an attribute variable
+    // Here we are assigning a buffer object to the attribute variable a_Position
+    // Specification of gl.vertexAttribPointer() :
+    // gl.vertexAttribPointer(location, size, type, normalized, stride, offset)
+    // Assign the buffer object bound to gl.ARRAY_BUFFER to the attribute variable
+    // specified by 'location'
+    // 'location' specifies the storage location of an attribute variable
+    // 'size' specifies the number of components per vertex in the buffer
+    // (valid values are 1 to 4). If size is less than the number of components
+    // required by the attribute variable, the missing components are automatically
+    // supplied just like gl.vertexAttrib. For example, if size is 1, the second and
+    // third components are set to 0, and the fourth component will be set to 1.
+    // 'type' specifies the data format
+    // 'normalized' either true or false to indicate whether nonfloating data be
+    //  normalized to [0,1] or [-1,1]
+    // 'stride' specifies the number of bytes between different vertex elements, or
+    // zero for default stride
+    // 'offset' specifies the offset in bytes in a buffer object to indicate the
+    // number'th byte the vertex data is stored from.
+    // Return value of the method is None
     gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 
-    // Enable the assignment to a_Position variable
+    // Enable the assignment to a_Position variable (fifth and final step)
+    // to make it possible to access a buffer object in a vertex shader, we
+    // need to enable the assignment of the buffer object to an attribute variable by
+    // using gl.enableVertexAttribArray(). Note that we are using the method to handle
+    // a buffer even though the method name suggest it's only for use with 'vertex arrays'.
+    // this is not a problem and is simply a legacy from OpenGL
+    // When you execute gl.enableVertexAttribArray() specifying an attribute variable
+    // that has been assigned a buffer object, the assignment is enabled
+    // note , you can break this assignment using gl.disableVertexAttribArray(location);
+    // note also that by enabling the assignment, you can no longer use
+    // gl.vertexAttrib[1234]f() to assign data to the attribute variable. You have to
+    // explicitly disable the assignment of a buffer object. You can't use both methods
+    // simultaneously
     gl.enableVertexAttribArray(a_Position);
 
     return n;
