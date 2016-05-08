@@ -44,7 +44,10 @@ function main() {
   var radian = Math.PI * ANGLE / 180.0; // Convert to radians
   var cosB = Math.cos(radian), sinB = Math.sin(radian);
 
-  // Note: WebGL is column major order
+    // Note: WebGL is column major order (i.e write the transpose in the array)
+    // Unlike GLSL ES, because JavaScript does not have a dedicated
+    // object for representing a matrix, you need to use the
+    // Float32Array.
   var xformMatrix = new Float32Array([
      cosB, sinB, 0.0, 0.0,
     -sinB, cosB, 0.0, 0.0,
@@ -58,6 +61,12 @@ function main() {
     console.log('Failed to get the storage location of u_xformMatrix');
     return;
   }
+
+    // Assign the 4x4 matrix specified by array to the uniform variable specified by
+    // location
+    //gl.uniformMatrix4fv(location, transpose, array)
+    //note, the transpose operation is not supported by WebGL's
+    //implementation of this method and must always be set to false
   gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix);
 
   // Specify the color for clearing <canvas>
