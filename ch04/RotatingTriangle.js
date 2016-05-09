@@ -59,17 +59,23 @@ function main() {
 	currentAngle = animate(currentAngle, timestamp);  // Update the rotation angle
 	draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
 	requestAnimationFrame(tick, canvas); // Request that the browser calls tick
-      // the Window.requestAnimationFrame() method tells the browser that you
-      // wish to perform an animation and requests that the browser call a specified
-      // function to update an animation before the next repaint
-      // the number of callbacks is usually 60 times per second, but will generally
-      // match the display refresh rate in most web browsers as per W3C recommendation
-      // the callback method is passed a single argument, a DOMHighResTimeStamp, which
-      // indicates the current time when callbacks queued by requestAnimationFrame
-      // begin to fire. Multiple callbacks in a single frame, therefore, each receive
-      // the same timestamp even though time has passed during the computation of
-      // every previous callback's workload. This timestamp is a decimal number,
-      // in milliseconds, but with a minimal precision of 1ms (1000 us)
+	// the Window.requestAnimationFrame() method tells the browser that you
+	// wish to perform an animation and requests that the browser call a specified
+	// function to update an animation before the next repaint
+	// the number of callbacks is usually 60 times per second, but will generally
+	// match the display refresh rate in most web browsers as per W3C recommendation
+	// the callback method is passed a single argument, a DOMHighResTimeStamp, which
+	// indicates the current time when callbacks queued by requestAnimationFrame
+	// begin to fire. Multiple callbacks in a single frame, therefore, each receive
+	// the same timestamp even though time has passed during the computation of
+	// every previous callback's workload. This timestamp is a decimal number,
+	// in milliseconds, but with a minimal precision of 1ms (1000 us)
+	// The function scheduled using this method is only called when tab in which
+	// it was defined is active.
+	// Because requestAnimationFrame() is a new method and not yet standardised, it
+	// is defined in the library supplied by Google, webgl-utils.js, which handles
+	// the differences among different browsers
+	
   };
   tick(0);
 }
