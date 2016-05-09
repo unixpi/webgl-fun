@@ -56,10 +56,21 @@ function main() {
   var modelMatrix = new Matrix4();
 
   // Start drawing
-  var tick = function() {
-    currentAngle = animate(currentAngle);  // Update the rotation angle
-    draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
-    requestAnimationFrame(tick, canvas); // Request that the browser calls tick
+    var tick = function() {
+	currentAngle = animate(currentAngle);  // Update the rotation angle
+	draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
+	requestAnimationFrame(tick, canvas); // Request that the browser calls tick
+      // the Window.requestAnimationFrame() method tells the browser that you
+      // wish to perform an animation and requests that the browser call a specified
+      // function to update an animation before the next repaint
+      // the number of callbacks is usually 60 times per second, but will generally
+      // match the display refresh rate in most web browsers as per W3C recommendation
+      // the callback method is passed a single argument, a DOMHighResTimeStamp, which
+      // indicates the current time when callbacks queued by requestAnimationFrame
+      // begin to fire. Multiple callbacks in a single frame, therefore, each receive
+      // the same timestamp even though time has passed during the computation of
+      // every previous callback's workload. This timestamp is a decimal number,
+      // in milliseconds, but with a minimal precision of 1ms (1000 us)
   };
   tick();
 }
