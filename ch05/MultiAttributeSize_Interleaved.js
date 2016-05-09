@@ -75,6 +75,17 @@ function initVertexBuffers(gl) {
     console.log('Failed to get the storage location of a_Position');
     return -1;
   }
+    // gl.vertexAttribPointer(location, size, type, normalized, stride, offset)
+    // the stride specifies the number of bytes used by a group of related
+    // vertex data (in this example, vertex coordinates and point size) inside the
+    // buffer object
+    // In previous examples, where you had only one type of information in the buffer
+    // - vertices - you set the stride to 0. However, in this example, both vertices
+    // and point sizes are laid out in the buffer so you need to set the stride to three
+    // times the size of each component in the group (two components for x,y coodinates,
+    //  plus one component for size)
+    // offset specifies where to start from
+    // size specifies how many components to process each time
   gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 3, 0);
   gl.enableVertexAttribArray(a_Position);  // Enable the assignment of the buffer object
 
