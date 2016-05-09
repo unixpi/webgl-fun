@@ -1,5 +1,17 @@
 // MultiAttributeColor.js (c) 2012 matsuda
 // Vertex shader program
+// Using varyin variables to send information from vertex to fragment shaders
+// Please note you can only use float types (and related types vec2, vec3, vec4,
+// mat2, mat3, and mat4 for varying variables
+// For the fragment shader to receive assigned data from the vertex shader,
+// all that is required is declaring a variable in the fragment shader with the
+// same name and types as that in the vertex shader
+// in this case: 'varying vec4 v_Color'
+// summary: in WebGL, when varying variables declared inside the fragment shader
+// have identical names and types to the ones declared in the vertex shader, the
+// assigned values in the vertex shader are automatically passed to the fragment
+// shader
+
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
@@ -12,9 +24,9 @@ var VSHADER_SOURCE =
 
 // Fragment shader program
 var FSHADER_SOURCE =
-  '#ifdef GL_ES\n' +
+ // '#ifdef GL_ES\n' +
   'precision mediump float;\n' + // Precision qualifier (See Chapter 6)
-  '#endif GL_ES\n' +
+ // '#endif GL_ES\n' +
   'varying vec4 v_Color;\n' +    // Receive the data from the vertex shader
   'void main() {\n' +
   '  gl_FragColor = v_Color;\n' +
