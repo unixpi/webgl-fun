@@ -1,5 +1,7 @@
 // TexturedQuad.js (c) 2012 matsuda and kanda
 // Vertex shader program
+
+//Part 1
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec2 a_TexCoord;\n' +
@@ -10,6 +12,7 @@ var VSHADER_SOURCE =
   '}\n';
 
 // Fragment shader program
+//Part 2
 var FSHADER_SOURCE =
   '#ifdef GL_ES\n' +
   'precision mediump float;\n' +
@@ -37,7 +40,8 @@ function main() {
     return;
   }
 
-  // Set the vertex information
+    // Set the vertex information
+    //part 3
   var n = initVertexBuffers(gl);
   if (n < 0) {
     console.log('Failed to set the vertex information');
@@ -99,6 +103,7 @@ function initVertexBuffers(gl) {
 }
 
 function initTextures(gl, n) {
+    //part 4
   var texture = gl.createTexture();   // Create a texture object
   if (!texture) {
     console.log('Failed to create the texture object');
@@ -125,6 +130,7 @@ function initTextures(gl, n) {
 }
 
 function loadTexture(gl, n, texture, u_Sampler, image) {
+    //part 5
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
   // Enable texture unit0
   gl.activeTexture(gl.TEXTURE0);
