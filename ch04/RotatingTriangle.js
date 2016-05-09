@@ -49,15 +49,14 @@ function main() {
     console.log('Failed to get the storage location of u_ModelMatrix');
     return;
   }
+    // Current rotation angle
+    var currentAngle = 0.0;
+    // Model matrix
+    var modelMatrix = new Matrix4();
 
-  // Current rotation angle
-  var currentAngle = 0.0;
-  // Model matrix
-  var modelMatrix = new Matrix4();
-
-  // Start drawing
-    var tick = function() {
-	currentAngle = animate(currentAngle);  // Update the rotation angle
+    // Start drawing
+    var tick = function(timestamp) {
+	currentAngle = animate(currentAngle, timestamp);  // Update the rotation angle
 	draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
 	requestAnimationFrame(tick, canvas); // Request that the browser calls tick
       // the Window.requestAnimationFrame() method tells the browser that you
@@ -72,7 +71,7 @@ function main() {
       // every previous callback's workload. This timestamp is a decimal number,
       // in milliseconds, but with a minimal precision of 1ms (1000 us)
   };
-  tick();
+  tick(0);
 }
 
 function initVertexBuffers(gl) {
@@ -123,9 +122,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
 // Last time that this function was called
 var g_last = Date.now();
-function animate(angle) {
+function animate(angle, timestamp) {
   // Calculate the elapsed time
-  var now = Date.now();
+  var now = timestamp;
   var elapsed = now - g_last;
   g_last = now;
   // Update the current rotation angle (adjusted by the elapsed time)
