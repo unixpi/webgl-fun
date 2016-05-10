@@ -205,7 +205,7 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
     // Bind the texture object to the target
     // if  a texture unit was made active by gl.activeTexture(), the
     // texture object is also bound to the texture unit (in this case gl.TEXTURE0)
-    // We need tot tell the WebGL system what type
+    // We need to tell the WebGL system what type
     // of texture image is used in the texture object
     // We do this by binding the texture object to the target
     // in a similar way to that of the buffer objects
@@ -220,6 +220,8 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
     // the binding
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
+
+    
     // Set the texture parameters of the texture object
     // these specify how the texture image will be processed when it is mapped to the shapes
     // gl.texParameteri(target, pname, param)

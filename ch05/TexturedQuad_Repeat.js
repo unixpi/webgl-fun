@@ -138,7 +138,16 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   // Set the texture parameter
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    //   the following two lines don't need to be explicitly written
+    //   as the default value of both gl.TEXTURE_WRAP_S and gl.TEXTURE_WRAP_T
+    //   is gl.REPEAT
+    //   the reason the image repeats itself is that the texture co-ordinates
+    //   we have specified go below 0.0 and above 1.0
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    
   // Set the image to texture
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
   

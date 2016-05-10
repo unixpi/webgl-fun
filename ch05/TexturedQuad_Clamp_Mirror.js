@@ -127,23 +127,26 @@ function initTextures(gl, n) {
 }
 
 function loadTexture(gl, n, texture, u_Sampler, image) {
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);  // Flip the image Y coordinate
-  // Activate texture unit0
-  gl.activeTexture(gl.TEXTURE0);
-  // Bind the texture object to the target
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);  // Flip the image Y coordinate
+    // Activate texture unit0
+    gl.activeTexture(gl.TEXTURE0);
+    // Bind the texture object to the target
+    gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  // Set the texture parameter
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  // Set the image to texture
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  
-  // Set the texture unit 0 to the sampler
-  gl.uniform1i(u_Sampler, 0);
-  
-  gl.clear(gl.COLOR_BUFFER_BIT);  // Clear <canvas>
+    // Set the texture parameter
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);  // Draw the rectangle
+    //t axis is the vertical axis
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+
+    // Set the image to texture
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+  
+    // Set the texture unit 0 to the sampler
+    gl.uniform1i(u_Sampler, 0);
+
+    gl.clear(gl.COLOR_BUFFER_BIT);  // Clear <canvas>
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);  // Draw the rectangle
 }
