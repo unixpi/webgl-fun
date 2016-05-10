@@ -19,7 +19,9 @@ var FSHADER_SOURCE =
   'varying vec2 v_TexCoord;\n' +
   'void main() {\n' +
   '  vec4 color0 = texture2D(u_Sampler0, v_TexCoord);\n' +
-  '  vec4 color1 = texture2D(u_Sampler1, v_TexCoord);\n' +
+    '  vec4 color1 = texture2D(u_Sampler1, v_TexCoord);\n' +
+    //the final fragment color is calculated from the two texels from
+    //both textures (initTextures creates two texture objects)
   '  gl_FragColor = color0 * color1;\n' +
   '}\n';
 
@@ -137,7 +139,10 @@ function initTextures(gl, n) {
 var g_texUnit0 = false, g_texUnit1 = false; 
 function loadTexture(gl, n, texture, u_Sampler, image, texUnit) {
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);// Flip the image's y-axis
-  // Make the texture unit active
+    // Make the texture unit active
+    // note, we cannot predict which texture image is loaded first because the browser
+    // loads them asynchronously
+    // we handle this by starting to draw only after loading both textures
   if (texUnit == 0) {
     gl.activeTexture(gl.TEXTURE0);
     g_texUnit0 = true;
@@ -158,6 +163,7 @@ function loadTexture(gl, n, texture, u_Sampler, image, texUnit) {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+    //don't draw until both textures are loaded
   if (g_texUnit0 && g_texUnit1) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);   // Draw the rectangle
   }

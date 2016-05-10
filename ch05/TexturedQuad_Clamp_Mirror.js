@@ -149,4 +149,5 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
     gl.clear(gl.COLOR_BUFFER_BIT);  // Clear <canvas>
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);  // Draw the rectangle
+
 }
