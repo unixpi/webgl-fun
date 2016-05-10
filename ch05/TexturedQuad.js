@@ -17,9 +17,11 @@ var VSHADER_SOURCE =
 //Part 2
 // Paste the texture image onto the geometric shape inside the fragment shader
 var FSHADER_SOURCE =
-  '#ifdef GL_ES\n' +
+//  '#ifdef GL_ES\n' +
   'precision mediump float;\n' +
-  '#endif\n' +
+    //  '#endif\n' +
+    //the uniform variable must be declared using the special data type for textures
+    // sampler2D :
   'uniform sampler2D u_Sampler;\n' +
   'varying vec2 v_TexCoord;\n' +
   'void main() {\n' +
@@ -195,13 +197,85 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     // Set the texture parameters of the texture object
+    // these specify how the texture image will be processed when it is mapped to the shapes
+    // gl.texParameteri(target, pname, param)
+    // pname specifies the name of the texture parameter
+    // param specifies the value set to the texture parameter
+    // There are four texture parameters available:
+    // (1) gl.TEXTURE_MAG_FILTER (Magnification method)
+    //     The method to magnify a texture image when you map the texture to a shape
+    //     whose drawing area is larger than the size of the texture
+    //     Default params value is gl.LINEAR
     
+    // (2) gl.TEXTURE_MIN_FILTER (Minification method)
+    //     The method to magnify a texture image when you map the texture to a shape
+    //     whose drawing area is smaller than the size of the texture
+    //     Default params value is gl.NEAREST_MIPMAP_LINEAR
+    
+    // (3) gl.TEXTURE_WRAP_S (Wrapping method on the left and right side)
+    //     How to fill the remaining regions on the left side and the right side of a
+    //     of a subregion when you map a texture image to the subregion of a shape
+    //     Default params value is gl.REPEAT
+
+    // (4) gl.TEXTURE_WRAP_T (Wrapping method on top and bottom)
+    //     How to fill the remaining regions on the top and bottom of a
+    //     of a subregion when you map a texture image to the subregion of a shape
+    //     Default params value is gl.REPEAT
+
+  
+    // texture filtering or texture smoothing is the method used to determine the texture color for a texture mapped pixel, using the colors of nearby texels (pixels of the texture)
+
+    //During the texture mapping process, a 'texture lookup' takes place to find out where on the texture each pixel center falls. Since the textured surface may be at an arbitrary distance and orientation relative to the viewer, one pixel does not usually correspond directly to one texel. Some form of filtering has to be applied to determine the best color for the pixel. Insufficient or incorrect filtering will show up in the image as artifacts (errors in the image), such as 'blockiness', jaggies, or shimmering.
+
+    //There can be different types of correspondence between a pixel and the texel/texels it represents on the screen. These depend on the position of the textured surface relative to the viewer, and different forms of filtering are needed in each case. Given a square texture mapped on to a square surface in the world, at some viewing distance the size of one screen pixel is exactly the same as one texel. Closer than that, the texels are larger than screen pixels, and need to be scaled up appropriately - a process known as texture magnification. Farther away, each texel is smaller than a pixel, and so one pixel covers multiple texels. In this case an appropriate color has to be picked based on the covered texels, via texture minification. Graphics APIs such as OpenGL allow the programmer to set different choices for minification and magnification filters.
+
+//    Note that even in the case where the pixels and texels are exactly the same size, one pixel will not necessarily match up exactly to one texel. It may be misaligned or rotated, and cover parts of up to four neighboring texels. Hence some form of filtering is still required.
+    
+    //Possible params constant values:
+    // gl.NEAREST: Uses the value of the texel that is nearest (in Manhattan distance)
+    //             to the center of the pixel being textured
+    // gl.LINEAR: Uses the weighted average of the four texels that are nearest the
+    //            center of the pixel being textured (the quality of the result is
+    //            clearer than that of gl.NEAREST, but it takes more time)
+    // gl.REPEAT: Use a texture image repeatedly
+    // gl.MIRRORED_REPEAT
+    // gl.CLAMP_TO_EDGE: use the edge color of a texture image
+    // gl.NEAREST_MIPMAP_NEAREST
+    // gl.LINEAR_MIPMAP_NEAREST
+    // gl.NEAREST_MIPMAP_LINEAR
+    // gl.LINEAR_MIPMAP_LINEAR
+
+    //Mipmapping is a standard technique used to save some of the filtering work needed during texture minification. During texture magnification, the number of texels that need to be looked up for any pixel is always four or fewer; during minification, however, as the textured polygon moves farther away potentially the entire texture might fall into a single pixel. This would necessitate reading all of its texels and combining their values to correctly determine the pixel color, a prohibitively expensive operation. Mipmapping avoids this by prefiltering the texture and storing it in smaller sizes down to a single pixel. As the textured surface moves farther away, the texture being applied switches to the prefiltered smaller size. Different sizes of the mipmap are referred to as 'levels', with Level 0 being the largest size (used closest to the viewer), and increasing levels used at increasing distances.
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  // Set the texture image
+
+
+    // Assign a texture Image to a texture Object
+    // in addition to assigning a texture, this method allows you to tell the
+    // WebGL system about the image characteristics
+    // gl.texImage2D(target, level, internalformat, format, type, image)
+    // after executing this method, the texture imageloaded into the Image object
+    // passed in throught the 'image' argument is passed to the WebGL system
+    // A note on formats: JPG img --> gl.RGB format, PNG --> gl.RGBA
+    // BMP --> gl.RGB
+    // gl.LUMINANCE and gl.LUMINANCE_ALPHA are used for grayscale images
+    // where luminance is the perceived brightness of a surface.
+    // It is often calculated as a weighted average of red, green, and blue color
+    // values that give the perceived brightness of a surface
+    // the type specifies the data type of the texel data. Usually we specify
+    // gl.UNSIGNED_BYTE as the data type. other data types are also available
+    // such as gl.UNSIGNED_SHORT_5_6_5 (which packs RGB components into 16bits)
+    // these types are used for passing compressed images to the WebGL system
+    // to reduce loading time
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
   
-  // Set the texture unit 0 to the sampler
-  gl.uniform1i(u_Sampler, 0);
+    // Set the texture unit 0 to the sampler
+    // Here we pass the texture unit tot he fragement shader
+    // once the texture image has been passed to the WebGL system, it must be passed
+    // to the fragment shader to map it to the surface of the shape
+    // As explained before, a uniform variable is used for this purpose because the
+    // texture image does not change for each fragment
+    
+    gl.uniform1i(u_Sampler, 0);
   
   gl.clear(gl.COLOR_BUFFER_BIT);   // Clear <canvas>
 
