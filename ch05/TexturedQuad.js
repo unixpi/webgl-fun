@@ -1,5 +1,10 @@
 // TexturedQuad.js (c) 2012 matsuda and kanda
 // Vertex shader program
+// note: texture mapping in WebGL seems a complex process partly because it must deal
+// with an image and request the browser to load it, and partly because you are required
+// to use the texture unit even if you use only a single texture. However, once you master
+// the basic steps, they are the same each time you want to map a texture
+
 
 //Part 1
 // Receive the texture coordinates in the vertex shader and then pass them to
@@ -21,10 +26,29 @@ var FSHADER_SOURCE =
   'precision mediump float;\n' +
     //  '#endif\n' +
     //the uniform variable must be declared using the special data type for textures
-    // sampler2D :
+    // sampler2D : Data type for accessing the texture bound to gl.TEXTURE_2D
+    // samplerCube: Data type '                               ' gl.TEXTURE_CUBE_MAP
   'uniform sampler2D u_Sampler;\n' +
   'varying vec2 v_TexCoord;\n' +
-  'void main() {\n' +
+    'void main() {\n' +
+    //read the color of the texel located at the corresponding texture coordinates
+    //from the texture image and then use it to set the color of the fragment
+    //here we use the GLSL ES built-in function texture2D() to read out the texel color
+    //from the shader. specify the texture unit number in the first parameter (type sampler)
+    //and the texture coordinates in the second.
+    //the return value is the texel color (vec4) for the coordinates. the color format used
+    //is the internalformat specified by gl.texImage2D()
+    //gl.RGB -->               (R , G , B , 1.0)
+    //gl.RGBA -->              (R , G , B , A )
+    //gl.ALPHA -->             (0.0,0.0,0.0,A)
+    //gl.LUMINANCE -->         (L , L , L , 1.0)    where L indicates luminance
+    //gl.LUMINANCE_ALPHA -->   (L , L , L , A )
+    //if the texture image is not available for some reason, returns (0.0,0.0,0.0,1.0)
+    //The texture magnification and minification parameters determine the return value in
+    //cases where WebGL interpolates the texel.
+    //Once this function executes, by assigning the return value to gl_FragColor, the
+    //fragment is displayed using the color. As a result of this operation, the texture
+    //image is mapped to the shape to be drawn (in this case, a rectangle)
   '  gl_FragColor = texture2D(u_Sampler, v_TexCoord);\n' +
   '}\n';
 
@@ -269,15 +293,15 @@ function loadTexture(gl, n, texture, u_Sampler, image) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
   
     // Set the texture unit 0 to the sampler
-    // Here we pass the texture unit tot he fragement shader
+    // Here we pass the texture unit to the fragement shader
+    // we specify '0' because we are using the texture object bound to gl.TEXTURE0
     // once the texture image has been passed to the WebGL system, it must be passed
     // to the fragment shader to map it to the surface of the shape
     // As explained before, a uniform variable is used for this purpose because the
     // texture image does not change for each fragment
-    
     gl.uniform1i(u_Sampler, 0);
-  
-  gl.clear(gl.COLOR_BUFFER_BIT);   // Clear <canvas>
 
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
+    gl.clear(gl.COLOR_BUFFER_BIT);   // Clear <canvas>
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
 }
