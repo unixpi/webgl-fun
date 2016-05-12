@@ -2,7 +2,13 @@
 // Vertex shader program
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
-  'attribute vec4 a_Color;\n' +
+    'attribute vec4 a_Color;\n' +
+    //the view matrix is passed to the vertex shader
+    //and then multiplied by the vertex co-ordinates
+    //to get the vertex position in the color buffer
+    //essentially, instead of moving the eye point
+    //in one direction, the objects viewed (that is the world itself)
+    //are moved in the opposite direction
   'uniform mat4 u_ViewMatrix;\n' +
   'varying vec4 v_Color;\n' +
   'void main() {\n' +
@@ -54,7 +60,9 @@ function main() {
     return;
   }
 
-  // Set the matrix to be used for to set the camera view
+    // Set the matrix to be used for to set the camera view
+    //Matric.setLookAt(eyeX, eyeY, eyeZ, atX, atY, atZ, upX, upY, upZ)
+    //default settings(  0 ,  0  ,  0  ,  0 ,  0 ,  -1,  0 ,  1 ,  0 ) 
   var viewMatrix = new Matrix4();
   viewMatrix.setLookAt(0.20, 0.25, 0.25, 0, 0, 0, 0, 1, 0);
 
