@@ -1,5 +1,13 @@
 // OrthoView_halfSize.js (c) 2012 matsuda
 // Vertex shader program
+// If the aspect ratio of <canvas> is different from that of the near clipping plane
+// distorted objects are displayed
+// here we reduce the current size of the clipping plane to half, while keeping its
+// aspect ratio :
+// projMatrix.setOrtho(-0.5, 0.5, -0.5, 0.5, 0, 0.5)
+// the triangles appear twice as large as before because the size of <canvas> is the
+// same as before. Note that the parts of the triangles outside the near clipping
+// plane are clipped
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

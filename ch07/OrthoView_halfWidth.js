@@ -1,5 +1,11 @@
 // OrthoView_halfWidth.js (c) 2012 matsuda
 // Vertex shader program
+// here we reduce only the width of the near clipping plane
+// by changing the first two arguments o setOrtho():
+// projMatrix.setOrtho(-0.3, 0.3, -1.0, 1.0, 0.0, 0.5)
+// this distorts our image quite dramatically as the
+// near clipping plane is horizontally reduced and then horizontally extended
+// (and thus distorted) to fit the square-shaped <canvas> when the plane is displayed
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
