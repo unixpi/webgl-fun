@@ -6,7 +6,8 @@ var VSHADER_SOURCE =
   'uniform mat4 u_ViewMatrix;\n' +
   'uniform mat4 u_ModelMatrix;\n' +
   'varying vec4 v_Color;\n' +
-  'void main() {\n' +
+    'void main() {\n' +
+    //rotate before viewing
   '  gl_Position = u_ViewMatrix * u_ModelMatrix * a_Position;\n' +
   '  v_Color = a_Color;\n' +
   '}\n';

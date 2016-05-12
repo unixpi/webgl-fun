@@ -1,5 +1,7 @@
 // LookAtRotatedTriangles_modelViewMatrix.js (c) 2012 matsuda
 // Vertex shader program
+//more efficient implementation
+//modelViewMatrix == view matrix * model (i.e rotation, translation, or scale) matrix
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

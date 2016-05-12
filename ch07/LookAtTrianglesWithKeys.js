@@ -1,5 +1,19 @@
 // LookAtTrianglesWithKeys.js (c) 2012 matsuda
 // Vertex shader program
+// Changing the Eye Point Using the Keyboard
+// As you play with the sample program, you may notice that as you shift the
+// eye position to the extreme right or extreme left, part of the triangle disappears
+// This is because we haven't specified the 'visible range' correctly
+// Although WebGL allows you to place 3D objects anywhere in 3D space, it only displays
+// those that are in the visible range
+// We see objects within the visible range based on our line of sight, which is approximately
+// 200 degrees in the horizontal field of view.
+// WebGL also has a similar limited range and does not display 3D objects outside of that range
+// In addition to the up/down, left/right range along the line of sight, WebGL has a depth
+// range that indicates how far you can see. These ranges are called the viewing volume.
+// In this case, because the depth range is not suffient, part of the triangle disappears as
+// it moves ut of the viewing volume
+
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
