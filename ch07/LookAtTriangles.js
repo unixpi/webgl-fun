@@ -61,7 +61,7 @@ function main() {
   }
 
     // Set the matrix to be used for to set the camera view
-    //Matric.setLookAt(eyeX, eyeY, eyeZ, atX, atY, atZ, upX, upY, upZ)
+    //Matrix.setLookAt(eyeX, eyeY, eyeZ, atX, atY, atZ, upX, upY, upZ)
     //default settings(  0 ,  0  ,  0  ,  0 ,  0 ,  -1,  0 ,  1 ,  0 ) 
   var viewMatrix = new Matrix4();
   viewMatrix.setLookAt(0.20, 0.25, 0.25, 0, 0, 0, 0, 1, 0);

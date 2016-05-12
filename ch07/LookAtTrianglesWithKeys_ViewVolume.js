@@ -1,5 +1,11 @@
 // LookAtTrianglesWithKey_ViewVolume.js (c) 2012 matsuda
 // Vertex shader program
+// because setOrtho() sets the viewing volume from the eye
+// and the line of sight, we need to set the position of the eye point and
+// then set the viewing volume
+// Consequently we will multiply the view matrix by the vertex co-ordinates to
+// get the vertex co-ordinates viewed from the eye position, and then multiply
+// the co-ordinates by the orthographic projection matrix (implemented in vertex shader)
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
