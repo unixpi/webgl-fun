@@ -1,5 +1,10 @@
 // HelloCube.js (c) 2012 matsuda
 // Vertex shader program
+// the eight vertices that define the cube are specified using the followin
+// colours: white, magenta (bright reddish-violet), red, yellow, green, cyan (bright blue)
+// and black
+// Because colors between vertices are interpolated, the resulting cube is shaded with as
+// attractive color gradient (actually a "color solid", an analog of the 2d 'color wheel')
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
@@ -66,7 +71,19 @@ function main() {
   // Clear color and depth buffer
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  // Draw the cube
+    // Draw the cube
+    // gl.drawElements(mode, count, type, offset
+    // Executes the shader and draws the geometric shape in the specified
+    // mode using the indices specified in the buffer object bound to ELEMENT_ARRAY_BUFFER
+    // when gl.drawElements() is called, the indices are extracted from the buffer object
+    // (indexBuffer) bound to gl.ELEMENT_ARRAY_BUFFER, while the associated vertex information
+    // is retrieved from the buffer object (vertexColorBuffer) bound to gl.ARRAY_BUFFER
+    // All these pieces of information are then passed to the attribute variable.
+    // The process is repeated for each index, and then the whole cube gets drawn by a
+    // single call to gl.drawElements()
+    // Although gl.drawElements() allows you to curb memory usage by sharing the vertex
+    // information, the cost is a process to convert the indices to vertex information
+    // (that is, a level of indirection)
   gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
 }
 
@@ -91,7 +108,16 @@ function initVertexBuffers(gl) {
     -1.0, -1.0, -1.0,     0.0,  0.0,  0.0   // v7 Black
   ]);
 
-  // Indices of the vertices
+    // Indices of the vertices
+    // because the indices are integers we can use an
+    // integer typed array Uint8Array (unsigned 8-bit encoded integer)
+    // if there are more than 256 indices, use Uint16Array instead
+    // The content of this array is the triangles list, where each
+    // grouping of three indices points to the three vertex
+    // coordinates for that triangle. Generally, this index does not
+    // need to be manually created because 3D modeling tools, introduced
+    // in the next chapter, usually generate it along with the vertices
+    // information
   var indices = new Uint8Array([
     0, 1, 2,   0, 2, 3,    // front
     0, 3, 4,   0, 4, 5,    // right
