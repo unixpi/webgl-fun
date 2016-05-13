@@ -1,5 +1,8 @@
 // Zfighting.js (c) 2012 matsuda
 // Vertex shader program
+// of you look at the program (around lines 80 - 90)
+// you can see that the z coordinate for each vertex is
+// set to -5.0, so z fighting should occur
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
@@ -68,7 +71,7 @@ function main() {
 
   // Enable the polygon offset function
   gl.enable(gl.POLYGON_OFFSET_FILL);
-  // Draw the triangles
+    // Draw the triangles 
   gl.drawArrays(gl.TRIANGLES, 0, n/2);   // The green triangle
     gl.polygonOffset(1.0, 1.0);          // Set the polygon offset
   gl.drawArrays(gl.TRIANGLES, n/2, n/2); // The yellow triangle
