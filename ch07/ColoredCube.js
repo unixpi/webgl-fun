@@ -1,5 +1,9 @@
 // ColoredCube.js (c) 2012 matsuda
 // Vertex shader program
+// Use single color for each side of the cube 
+// the only difference from HelloCube.js is the method of storing
+// vertex information into the buffer object.
+
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

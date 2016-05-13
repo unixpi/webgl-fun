@@ -1,5 +1,11 @@
 // HelloCube_singleColor.js (c) 2012 matsuda
 // Vertex shader program
+// Up until now you could differentiate each face because they were differently coloredcube
+// However, when you switch to a unique color, you lose the 3 dimensional impression
+// In contrast, in the real world, when you put a white box on a table, you can identify it
+// as a solid.
+// This is because each face, although the same white color, presents a slightly different
+// appearance because each is lit slightly differently.
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
