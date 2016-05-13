@@ -1,5 +1,10 @@
 // PerspectiveView_mvpMatrix.js (c) 2012 matsuda
 // Vertex shader program
+// In PerspectiveView_mvp, we calculated proj matrix * view matrix * model matrix directly
+// inside the vertex shader. This calculation is the same for all the vertices, so there is
+// no need to recalculate it inside the shader for each vertex.
+// Here we compute it in advance inside the JS code. It is called the model view projection
+// matrix.
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

@@ -1,5 +1,7 @@
 // PerspectiveView.js (c) 2012 matsuda
 // Vertex shader program
+// here we set a quadrangular pyramid viewing volume that points along the
+// negatice z-axis from the eye-point set at (0, 0, 5)
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
@@ -59,7 +61,12 @@ function main() {
   var viewMatrix = new Matrix4();　// The view matrix
   var projMatrix = new Matrix4();  // The projection matrix
 
-  // calculate the view matrix and projection matrix
+    // calculate the view matrix and projection matrix
+    // to actually make the background area looks smaller
+    // than the foreground area, this box needs to have
+    // considerable depth. So this time we will use a slightly
+    // more distanct position (0,0,5) than the default value (0,0,0)
+    // for the eye point
   viewMatrix.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
   projMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
   // Pass the view and projection matrix to u_ViewMatrix, u_ProjMatrix
@@ -76,7 +83,9 @@ function main() {
 function initVertexBuffers(gl) {
   var verticesColors = new Float32Array([
     // Three triangles on the right side
-    0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
+      0.75,  1.0,  -4.0,  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+      0.4,  1.0,  0.4, // The back green one
     0.25, -1.0,  -4.0,  0.4,  1.0,  0.4,
     1.25, -1.0,  -4.0,  1.0,  0.4,  0.4, 
 

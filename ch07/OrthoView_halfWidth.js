@@ -6,6 +6,7 @@
 // this distorts our image quite dramatically as the
 // near clipping plane is horizontally reduced and then horizontally extended
 // (and thus distorted) to fit the square-shaped <canvas> when the plane is displayed
+
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +

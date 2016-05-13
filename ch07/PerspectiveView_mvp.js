@@ -1,5 +1,15 @@
 // PerspectiveView_mvp.js (c) 2012 matsuda
 // Vertex shader program
+// here we use all threes (mvp) matrices to draw the 6 triangles
+// note we only store location of 3 triangles
+// we draw them once, translated by 0.75 along the x axis
+// we then draw them again, translated by -0.75 along the x axis
+// we use the model matrix to achieve this, editing it between draws
+// This apporach allows one to draw two sets of triangles from a single
+// set of triangle data, which reduces the number of vertices needed but
+// increases the number of calls to gl.drawArrays(). The choice of which
+// approach to use for better performance depends on the application and
+// the WebGL implementation
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
