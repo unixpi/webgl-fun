@@ -1,5 +1,8 @@
 // LightedCube.js (c) 2012 matsuda
 // Vertex shader program
+// the calculatation that the vertex shader performs:
+// (surface color by diffuse reflection) =
+// ((light color) * (base color of surface)) * ((light direction) * (orientation of a surface))
 var VSHADER_SOURCE = 
   'attribute vec4 a_Position;\n' + 
   'attribute vec4 a_Color;\n' + 
