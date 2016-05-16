@@ -3,24 +3,51 @@
 // the calculatation that the vertex shader performs:
 // (surface color by diffuse reflection) =
 // ((light color) * (base color of surface)) * ((light direction) * (orientation of a surface))
+// light direction and surface orientation must be normalized (1.0 in length)
+
+// note each vertex has three normals (one for each perpendicular face)
 var VSHADER_SOURCE = 
-  'attribute vec4 a_Position;\n' + 
-  'attribute vec4 a_Color;\n' + 
-  'attribute vec4 a_Normal;\n' +        // Normal
-  'uniform mat4 u_MvpMatrix;\n' +
-  'uniform vec3 u_LightColor;\n' +     // Light color
-  'uniform vec3 u_LightDirection;\n' + // Light direction (in the world coordinate, normalized)
-  'varying vec4 v_Color;\n' +
-  'void main() {\n' +
-  '  gl_Position = u_MvpMatrix * a_Position ;\n' +
-  // Make the length of the normal 1.0
-  '  vec3 normal = normalize(a_Normal.xyz);\n' +
-  // Dot product of the light direction and the orientation of a surface (the normal)
-  '  float nDotL = max(dot(u_LightDirection, normal), 0.0);\n' +
-  // Calculate the color due to diffuse reflection
-  '  vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n' +
-  '  v_Color = vec4(diffuse, a_Color.a);\n' +
-  '}\n';
+    'attribute vec4 a_Position;\n' +
+    //the base color of a surface is passed in as a_Color
+    'attribute vec4 a_Color;\n' +
+    //the surface orientation is passed in as a_Normal
+    'attribute vec4 a_Normal;\n' +        // Normal
+    'uniform mat4 u_MvpMatrix;\n' +
+    'uniform vec3 u_LightColor;\n' +     // Light color
+    // note that u_LightDirection is passed in the world coordinate system and has been
+    // normalized in the JavaScript code for ease for handling. This avoids the overhead
+    // of normalizing it every time it's used in the vertex shader
+    // In this book, the light effect with shading is calculated in the world coordinate
+    // system because it is simpler to program and more intuitive with respect to the light
+    // direction. It is also safe to calulate it in the view coordinate system but more complex
+    'uniform vec3 u_LightDirection;\n' + // Light direction (in the world coordinate, normalized)
+    'varying vec4 v_Color;\n' +
+    'void main() {\n' +
+    '  gl_Position = u_MvpMatrix * a_Position ;\n' +
+    // Make the length of the normal 1.0, normalize is a built in webgl (GLSL ES) function
+    // note the normal used in this program is 1.0 in length, this is for good practice
+    // although a_Normal is of type vec4, a normal represents a direction and uses only
+    // the x,y and z components. So you extract these components with .xyz and then normalize
+    // we pass the normal as a vec4 rather than as a vec3 here as a vec4 will be needed when
+    // we extend the code in the next example
+    '  vec3 normal = normalize(a_Normal.xyz);\n' +
+    // Dot product of the light direction and the orientation of a surface (the normal)
+    // a negative dot product means that theta in cos(theta) is more than 90 degrees which means
+    // that light hits the surface on its back face. This is the same as no light hitting the
+    // front face
+    '  float nDotL = max(dot(u_LightDirection, normal), 0.0);\n' +
+    // Calculate the color due to diffuse reflection
+    // Although transparency of an object's surface has a significant effect on the color of
+    // the surface, because the calculation of light passing through an object is complicated,
+    // we ignore transparency and don't use the alpha value in this program
+    '  vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n' +
+    '  v_Color = vec4(diffuse, a_Color.a);\n' +
+    // the result of the processing steps above is that a color, depending on the direction of
+    // the vertex's normal, is calculated, passed to the fragment shader, and assigned to
+    // gl_FragColor
+    // In this case, because we are using a directional light, vertices that make up the same
+    // surface are the same color, so each surface will be a solid color.
+    '}\n';
 
 // Fragment shader program
 var FSHADER_SOURCE = 
