@@ -184,6 +184,9 @@ function initVertexBuffers(gl) {
   return indices.length;
 }
 
+// initArrayBuffer, which was also uses in ColoredCube, assigns the array
+// specified by the third argument (data) to the attribute variable that has the name
+// specified by the second argument (attribute)
 function initArrayBuffer (gl, attribute, data, num, type) {
   // Create a buffer object
   var buffer = gl.createBuffer();
