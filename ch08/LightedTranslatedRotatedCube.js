@@ -1,5 +1,27 @@
 // LightedTranslatedRotatedCube.js (c) 2012 matsuda
 // Vertex shader program
+// this program uses a directional light source to light a cube that is rotated 90 degrees
+// clockwise around the z-axis and translated 0.9 units in the y-axis direction
+// n.b. normal direction may change when coordinate transformations are applied
+// The normal direction is not changed by a translation because the orientation of the
+// object does not change
+// The normal direction is changed by a rotation according to the orientation of the object
+// Scaling has a more complicated effect on the normal
+// If an object is scaled equally in all axes the normal direction is not changed
+// otherwise, it depends
+// the calculation of the normal under various transformations is complex, particularly
+// when dealing with scaling. However, a mathematical technique can help
+// The Magic Matrix: Inverse Transpose Matrix
+// The new normal direction can be calculated by multiplying the old normal by the inverse
+// transpose matrix of the model matrix (the matrix that performs a coorinate transformation
+// on an object)
+
+// Note that in this example:
+// (1) the translation doesn't change the normal direction
+// (2) neither does the rotation by 90 degrees, because the rotation simply switches the surfaces//     of the cube
+// (3) the light direction of the directional light does not change regardless of the position
+//     of the object
+// (4) diffuse reflection reflects the light in all directions with equal intensity
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
