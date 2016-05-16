@@ -1,5 +1,11 @@
 // PointLightedCube.js (c) 2012 matsuda
 // Vertex shader program
+// In the previous sample programs, we calculated the color at each vertex by passing
+// the normal and the light direction for each vertex. We will use the same approach here,
+// but because the light direction changes, we need to pass the position of the light source
+// and then calculate the light direction at each vertex position
+// note that because we use a point light in this program, we will use the light position
+// instead of the light direction.
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
@@ -15,9 +21,14 @@ var VSHADER_SOURCE =
   '  gl_Position = u_MvpMatrix * a_Position;\n' +
      // Recalculate the normal based on the model matrix and make its length 1.
   '  vec3 normal = normalize(vec3(u_NormalMatrix * a_Normal));\n' +
-     // Calculate world coordinate of vertex
+    // Calculate world coordinate of vertex in order to calculate the light direction
+    // (which is specified in world co-ordinates as it is easier to reason about the light
+    //  position in world co-ordinates)
   '  vec4 vertexPosition = u_ModelMatrix * a_Position;\n' +
-     // Calculate the light direction and make it 1.0 in length
+    // Calculate the light direction and make it 1.0 in length
+    // note that because a point light emits light in all directions from its position
+    // the light direction at a vertex is the result of subtracting the vertex position
+    // from the light source position
   '  vec3 lightDirection = normalize(u_LightPosition - vec3(vertexPosition));\n' +
      // The dot product of the light direction and the normal
   '  float nDotL = max(dot(lightDirection, normal), 0.0);\n' +

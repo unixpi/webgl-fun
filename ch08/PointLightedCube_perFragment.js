@@ -1,5 +1,12 @@
 // PointLightedCube_perFragment.js (c) 2012 matsuda
 // Vertex shader program
+// To calculate the color per fragment when light hits,
+// you need:
+// (1) the position of the fragment in the world coordinate system
+// (2) the normal direction at the fragment position
+// You can utilize interpolation to obtain these values per
+// fragment by jsut calculating them per vertex in the vertex shader
+// and passing them via varying variables to the fragment shader
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
